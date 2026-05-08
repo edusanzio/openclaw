@@ -1,17 +1,22 @@
-name: Build Android APK
+name: Build OpenClaw Android APK
 
 on:
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout OpenClaw
+      - name: Checkout OpenClaw official repo
         uses: actions/checkout@v4
         with:
-          ref: v2026.3.13
+          repository: openclaw/openclaw
+          ref: main
+          fetch-depth: 1
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -22,11 +27,15 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build APK
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build Android APK
         run: ./gradlew --no-daemon :app:assemblePlayDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: openclaw-android-apk
-          path: apps/android/app/build/outputs/apk/**/*.apk
+          path: |
+            **/build/outputs/apk/**/*.apk
