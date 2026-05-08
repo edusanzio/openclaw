@@ -28,9 +28,11 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Make Gradle executable
+        working-directory: apps/android
         run: chmod +x ./gradlew
 
       - name: Build Android APK
+        working-directory: apps/android
         run: ./gradlew --no-daemon :app:assemblePlayDebug
 
       - name: Upload APK
@@ -38,4 +40,4 @@ jobs:
         with:
           name: openclaw-android-apk
           path: |
-            **/build/outputs/apk/**/*.apk
+            apps/android/**/build/outputs/apk/**/*.apk
